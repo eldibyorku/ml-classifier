@@ -3,6 +3,7 @@ from tkinter import ttk
 import pandas as pd
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import numpy as np
 
 # Assuming 'dataset_0_100.csv' exists and is formatted correctly.
 df = pd.read_csv('dataset_0_100.csv')
@@ -39,6 +40,14 @@ def update_plot():
     plot.clear()
     plot.scatter(df.loc[classified, 'x'], df.loc[classified, 'y'], color='red', label='Class 1')
     plot.scatter(df.loc[~classified, 'x'], df.loc[~classified, 'y'], color='blue', label='Class 0')
+    
+    plot.set_xlim(0, 100)
+    plot.set_ylim(0, 100)
+
+    x_values = np.array(plot.get_xlim())  # Get the current x-axis limits to draw the line across the visible area
+    y_values = ((weight_1_1 - weight_1_2) * x_values + (bias_1 - bias_2)) / (weight_2_2 - weight_2_1)
+    plot.plot(x_values, y_values, label='Decision Boundary', color='green')
+
     plot_setup()
 
 def plot_setup():
@@ -47,7 +56,7 @@ def plot_setup():
     plot.set_xlabel('X axis')
     plot.set_ylabel('Y axis')
     plot.grid(True)
-    plot.legend()
+    # plot.legend()
     canvas.draw()
 
 # Create the main window
@@ -74,7 +83,7 @@ weight_2_1_slider = tk.Scale(root, from_=-1, to=1, resolution=0.01, orient='hori
 weight_2_1_slider.pack()
 weight_2_2_slider = tk.Scale(root, from_=-1, to=1, resolution=0.01, orient='horizontal', label='weight_2_2', command=update_value)
 weight_2_2_slider.pack()
-bias_1_slider = tk.Scale(root, from_=-1, to=1, resolution=0.01, orient='horizontal', label='bias_1', command=update_value)
+bias_1_slider = tk.Scale(root, from_=-10, to=10, resolution=0.01, orient='horizontal', label='bias_1', command=update_value)
 bias_1_slider.pack()
 bias_2_slider = tk.Scale(root, from_=-10, to=10, resolution=0.01, orient='horizontal', label='bias_2', command=update_value)
 bias_2_slider.pack()
